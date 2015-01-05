@@ -1,0 +1,33 @@
+Rectangle Tester
+Brett Fouss
+1/20/2013
+Comp 15
+
+Purpose: Calculate the area, perimeter of a given rectangle,
+         as well as report whether or not given rectangle
+         is or is not a square.
+
+List of Files:
+ - Rectangle.h   - header file with declaration of the class
+       	           "rectangle."
+ - Rectangle.cpp - definition of functions within rectangle
+                   class.
+ - rectangleTester.cpp - contains main. client will interact
+                         with this file. 
+
+Compiling: type " make rectangleTester "  OR
+           type " g++ -o rectangle.o -c rectangle.cpp "
+                " g++ -o rectangleTester.o -c rectangleTester.cpp "
+                " g++ -o rectangleTester rectangle.o rectangleTester.o "
+
+Data structure: basic variable storage. private data stored in class.
+
+Algorithm: 
+
+1. Default constructor creates unit rectangle. 
+2. User inputs length and width of rectangle. Setter functions
+   store as private data in class. 
+3. Perimeter, area and isSquare functions defined in implementation 
+   file.
+4. Helper function in main is passed instance of rectangle and a 
+   number, couts output along with calculated perimeter and area.

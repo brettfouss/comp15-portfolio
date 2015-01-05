@@ -1,0 +1,131 @@
+HW5 Song Search
+Design Document
+Brett Fouss
+4/16/14
+
+In planning HW5, I have been thinking a lot about how to make my program's
+song search as fast as possible. I decided to use data structures that would
+allow this, even if the program takes a little longer to sort and arrange
+input data. I believe this is a necessary trade-off.
+
+Summary of Data Structure
+
+Therefore, my program will utilize two main data structures: a trie and 
+various heaps. The trie will be used primarily to store all the words,
+however, in addition to this, the trie will also store pointers that will
+link the words to all the songs that contain that word. This will allow for
+incredibly fast lookup: accessing all of the songs/artists associated with a
+certain word will only take O(n) time where n is the # of letters in each word.
+
+The trie will be implemented using vectors in order to save space and 
+incorporate digits 0 - 9. Each letter node will itself contain a vector with 
+all of it's children. Therefore, this allows my data structure to avoid having 
+36 pointers within every node. The # of pointers would increase exponentially
+and waste a lot of space. By using a vector, space allotted for children will 
+be (almost) equal to the number of children each letter node has (plus some 
+extra space due to vector expansion).
+
+At the end of each word, the trie node will also contain a pointer to the
+root of a heap containing all of the songs containing that particular word.
+The key for this heap will be the frequency of that word in that song. As the
+heap is built, it will sort the data so that the "min" of the heap is the song
+with the highest frequency of that word. Removing and printing 10 nodes from
+the heap, as it will be pre-sorted, has a complexity of O(1)! 
+
+Storage Process
+
+1. Main will pass in a data text file to a read-in function.
+2. Lyrics will be packaged as an array along with artist and song name.
+3. Songs (including artist name and lyrics) will be stored in a dynamic for
+   reference. 
+4. Each word will then be processed.
+	a. Capitilized letters will be converted to lowercase.
+	b. Special characters and punctuation will be removed.
+	c. Frequency of each word (within each song) will be calculated 
+           and packaged.
+5. The word/song will then be then added to a trie.
+6. If word is already in trie, song is added to heap of songs containing 
+   that word.
+	a. address of song info is stored as a member variable of that heap node
+	b. frequency of that word in that song is stored in node as well
+7. After every word of every song has been added, each heap is sorted based on
+   frequency key (less frequent).
+
+*Note: If this algorithm proves to be too time consuming, I will only keep the 
+       top 10 songs. The program will not add songs with word frequency less 
+       than the minimum frequency to the heap. This will reduce time needed 
+       to sort all the heaps. 
+
+Sketch
+
+	- Song Info Array -
+
+[index] Artist/Title/Lyric(s)
+
+[0] Marvin Gaye/Let's Get It On/"me lovin' you"
+[1] R.Kelly/Bump N' Grind/"love is"
+[2] The Beatles/All You Need is Love/"Love, love, love"
+[3] Phil Collins/One More Night/"I can't wait forever"
+[4] Bryan Adams/I Do it For You/"for you"
+[5] Velvet Underground/Some Kinda Love/"love [...] love"
+
+		 - Trie -                             - Heap -
+                  (root)                          (For word "love")
+	         ///|\\\\                             (sorted)
+    _______________________________
+    c    f    i*    l     m   w   y               {Song: &Song[1]}
+    |    |    |     |     |   |   |               {Freq: 1       } 
+    a    o    s*    o     e*  a   o                 /          \
+    |    |          |         |   |                /            \
+    n    r*         v         i   u*              /              \
+    |    |        /   \       |                  /                \           
+    t*   e       i     \      t*                /                  \           
+         |       |      \                  {Song: &Song[5]} {Song: &Song[2]}
+	 v       n*      e* =============> {Freq: 2       } {Freq: 3       }
+         |                  pointer to heap
+         e
+         |
+         r*
+
+Things to note about storage:
+
+1. Punctuation is removed from "love," and " lovin' " and " can't "
+2. "Love" is interpreted as "love"
+3. "loving and "love" are not the same word
+4. "for" and "forever" have the same prefix (AND "for" is a prefix of "forever")
+5. Beatles - All You Need is Love will be removed from the heap FIRST
+
+Sample Output:
+
+./songsearch < sample.txt
+love
+
+Title: All You Need is Love
+Artist: The Beatles
+Context: [context] Love, [context]
+
+Title: All You Need is Love
+Artist: The Beatles
+Context: [context] love, [context]
+
+Title: All You Need is Love
+Artist: The Beatles
+Context: [context] love [context]
+
+Title: Some Kinda Love
+Artist: Velvet Underground
+Context: [context] love [context]
+
+Title: Some Kinda Love
+Artist: Velvet Underground
+Context: [context] love [context]
+
+Title: Bump N' Grind
+Artist: R. Kelly
+Context: [context] love [context]
+
+<END-OF_REPORT>
+
+Signed off by: Chris!
+
+
